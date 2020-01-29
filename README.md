@@ -9,6 +9,7 @@ Access the website and just Write! Share the link with your friends!
 Of course, everyone has their secrets.  
 
 Use **Ctrl+L** to lock/unlock your text.  
+Also, if you're using a phone,just **shake** to lock/unlock.
 **PS:** you can only unlock the text in the **current** session,after refreshing the page,you'll unable to unlock the text.
 
 ## About  
