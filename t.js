@@ -35,6 +35,8 @@ $.aj = function(p, d, sf, m) { /*(path,data,success or fail,method)*/
 var recent = '';
 var lock = 'false';
 var lockaction = '';
+var cooldown = false;
+var cooltm; /*cooldown timer*/
 
 function c() { /*checker*/
     var v = SC('p').value;
@@ -44,11 +46,11 @@ function c() { /*checker*/
     }
 }
 var tm;
-SC('p').addEventListener('input',function(){
-	if(tm){
-		clearTimeout(tm);
-	}
-	tm=setTimeout(c,1000);
+SC('p').addEventListener('input', function() {
+    if (tm) {
+        clearTimeout(tm);
+    }
+    tm = setTimeout(c, 1000);
 });
 
 function up(c, l = false) { /*Uploader*/
@@ -69,7 +71,7 @@ function up(c, l = false) { /*Uploader*/
                 lockaction = '';
                 lock = 'true';
                 console.log('Locked.');
-				notice('文字已被锁定');
+                notice('文字已被锁定');
             } else if (m == 'failunlock') {
                 notice('Can\'t be unlocked.');
                 console.log('Can\'t be unlocked.');
@@ -119,20 +121,27 @@ if (id !== undefined && id !== null) {
 var ocode = optcode(); /*getcode*/
 
 function locker() {
-    var v = SC('p').value;
-    if (lock == 'false') {
-        lock = 'true';
-        notice('Locked.');
-		play('./lock.wav');
-        console.log('Action:lock');
-    } else {
-        lock = 'false';
-        notice('Unlock...');
-		play('./unlock.mp3');
-        lockaction = 'unlock';
-        console.log('Action:unlock');
+    if (!cooltm || !cooldown) {
+        clearInterval(cooltm);
+        cooldown = true;
+        cooltm = setTimeout(function() {
+            cooldown = false;
+        }, 2000);
+        var v = SC('p').value;
+        if (lock == 'false') {
+            lock = 'true';
+            notice('Locked.');
+            play('./lock.wav');
+            console.log('Action:lock');
+        } else {
+            lock = 'false';
+            notice('Unlock...');
+            play('./unlock.mp3');
+            lockaction = 'unlock';
+            console.log('Action:unlock');
+        }
+        up(v, true);
     }
-    up(v, true);
 }
 document.onkeydown = function(e) {
     var keyCode = e.keyCode || e.which || e.charCode;
@@ -177,7 +186,7 @@ function deviceMotionHandler(eventData) {
 } /*Notice*/
 
 function notice(t) {
-	SC('n').style.zIndex = 2;
+    SC('n').style.zIndex = 2;
     var nn = window.ntnum;
     var i = document.createElement('p');
     i.id = 'nt' + nn;
@@ -208,10 +217,10 @@ setInterval(function() {
     if (window.totalnt <= 0) {
         SC('n').style.zIndex = -1;
     }
-}, 500);
-/*初始化音频*/
+}, 500); /*初始化音频*/
 var audios = document.createElement('audio');
 audios.setAttribute('autoplay', 'autoplay');
-function play(u){
-	audios.setAttribute('src', u);
+
+function play(u) {
+    audios.setAttribute('src', u);
 }
