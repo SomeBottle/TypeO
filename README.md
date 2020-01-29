@@ -14,6 +14,21 @@ Also, if you're using a phone,just **shake** to lock/unlock.
 1. You can only unlock the text in the **current** session,after refreshing the page,you'll unable to unlock the text.  
 2. Concerning sercurity, when you access the webpage with http protocol , you're unable to shake because of the disability of the event 'devicemotion',in that case ,I suggest you access it with **https** protocol.  
 
+## Nginx rewrite rule.
+```conf
+if (!-e $request_filename)  
+{  
+    rewrite ^/(.*)$ /index.php?r=$1;  
+}  
+
+```  
+With the rewrite rule , you need to change the path in **index.php**:  
+```php
+if(empty($r)){  
+	header('Location: ?r='.$id);/*开了伪静态改这个！*/  
+}else{  
+```
+
 ## About  
 My little program, just for sharing~  
 -SomeBottle
