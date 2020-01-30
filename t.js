@@ -58,6 +58,7 @@ function up(c, l = false) { /*Uploader*/
     if (!l) {
         ucode = '';
     }
+	c=encodeURIComponent(c);
     $.aj('./x.php?a=up', {
         t: c,
         i: id,

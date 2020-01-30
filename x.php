@@ -3,6 +3,7 @@ error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
 date_default_timezone_set("Asia/Shanghai");
 header('Content-type:text/json;charset=utf-8');
 $p = $_POST['t'];
+$p=urldecode($p);
 $id = $_POST['i'];
 $iflock = $_POST['l'];
 $lccode = $_POST['code'];
@@ -20,7 +21,7 @@ if ($act == 'up') {
         $ct = array();
         if (!file_exists($path)) {
             $ct['unix'] = time();
-            $ct['content'] = base64_encode($p);
+            $ct['content'] = base64_encode(htmlspecialchars(addslashes($p)));
             $ct['lock'] = 'false';
             file_put_contents($path, '<?php $ct=' . var_export($ct, true) . ';?>');
             echo 'success';
@@ -39,7 +40,7 @@ if ($act == 'up') {
                 }
                 if ($ct['lock'] !== 'true') {
                     $ct['unix'] = time();
-                    $ct['content'] = base64_encode($p);
+                    $ct['content'] = base64_encode(htmlspecialchars(addslashes($p)));
                     file_put_contents($path, '<?php $ct=' . var_export($ct, true) . ';?>');
                     echo 'success';
                 } else {
@@ -57,7 +58,7 @@ if ($act == 'up') {
 } else if ($act == 'gt') {
     if (file_exists($path)) {
         require $path;
-        echo base64_decode($ct['content']);
+        echo htmlspecialchars_decode(stripslashes(base64_decode($ct['content'])));
     } else {
         echo 'new';
     }
